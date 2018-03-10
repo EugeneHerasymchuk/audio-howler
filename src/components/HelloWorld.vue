@@ -1,94 +1,61 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <ul>
-      <li>
-        <a
-          href="https://vuejs.org"
-          target="_blank"
-        >
-          Core Docs
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://forum.vuejs.org"
-          target="_blank"
-        >
-          Forum
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://chat.vuejs.org"
-          target="_blank"
-        >
-          Community Chat
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://twitter.com/vuejs"
-          target="_blank"
-        >
-          Twitter
-        </a>
-      </li>
-      <br>
-      <li>
-        <a
-          href="http://vuejs-templates.github.io/webpack/"
-          target="_blank"
-        >
-          Docs for This Template
-        </a>
-      </li>
-    </ul>
-    <h2>Ecosystem</h2>
-    <ul>
-      <li>
-        <a
-          href="http://router.vuejs.org/"
-          target="_blank"
-        >
-          vue-router
-        </a>
-      </li>
-      <li>
-        <a
-          href="http://vuex.vuejs.org/"
-          target="_blank"
-        >
-          vuex
-        </a>
-      </li>
-      <li>
-        <a
-          href="http://vue-loader.vuejs.org/"
-          target="_blank"
-        >
-          vue-loader
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/awesome-vue"
-          target="_blank"
-        >
-          awesome-vue
-        </a>
-      </li>
-    </ul>
+    <el-slider
+      v-model="range"
+      range
+      :max="303"
+      show-tooltip
+      :format-tooltip="format"
+      @change="renderAudio"
+    >
+    </el-slider>
+    <button @click="play">Play</button>
+    <button @click="pause">Pause</button>
   </div>
 </template>
 
 <script>
+import {Howl} from 'howler'
+
 export default {
   name: 'HelloWorld',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      src: ['/static/audio.mp3'],
+      sound: null,
+      range: [0, 100]
+    }
+  },
+  created () {
+    this.sound = new Howl({
+      src: this.src,
+      sprite: {
+        ring: [8000, 7000, true]
+      }
+    })
+  },
+  methods: {
+    renderAudio (value) {
+      this.sound.pause()
+
+      console.log(value, this.range)
+      this.sound = new Howl({
+        src: this.src,
+        sprite: {
+          ring: [this.range[0] * 1000, this.range[1] * 1000, true]
+        }
+      })
+
+      this.sound.play('ring')
+    },
+    format (value) {
+      return value
+    },
+    play () {
+      this.sound.play('ring')
+    },
+    pause () {
+      this.sound.pause()
     }
   }
 }
@@ -110,4 +77,8 @@ li {
 a {
   color: #42b983;
 }
+  .hello {
+    margin: auto;
+    width: 500px;
+  }
 </style>
